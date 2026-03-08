@@ -1,0 +1,98 @@
+Build a full-stack web platform called **"OrbitalX – Decentralized Satellite Data Marketplace"** that combines **AI, Blockchain, and Space Technology**.
+
+The platform should allow satellite data providers to upload Earth observation datasets and sell them to users through a decentralized marketplace. Blockchain should verify ownership and manage payments through smart contracts, while AI analyzes satellite imagery for insights such as crop health, disaster detection, and land classification.
+
+Core Features:
+
+1. User Authentication
+
+* Users can register and login.
+* Two roles: Data Provider and Data Buyer.
+
+2. Satellite Dataset Marketplace
+
+* Providers can upload satellite imagery datasets.
+* Each dataset should include metadata: name, resolution, location, timestamp, price, and description.
+* Display datasets in a marketplace UI with search and filtering.
+
+3. Decentralized Storage
+
+* Satellite images should be stored on **IPFS**.
+* Save the IPFS hash on blockchain.
+
+4. Blockchain Integration
+
+* Use **Polygon or Ethereum testnet**.
+* Smart contract should store:
+
+  * dataset owner
+  * dataset hash
+  * price
+  * timestamp
+* Implement a smart contract purchase function that transfers payment and grants dataset access.
+
+5. AI Image Analysis
+
+* Use Python AI services to analyze satellite images.
+* Implement:
+
+  * land classification (forest, water, urban, agriculture)
+  * disaster detection (flood/fire)
+* Return analysis results as JSON.
+
+6. Visualization Dashboard
+
+* Interactive map showing dataset locations using **Leaflet or Mapbox**.
+* Show satellite image preview and AI analysis results.
+
+7. Dataset Purchase System
+
+* Buyers can purchase datasets using blockchain transactions.
+* Smart contract verifies payment and unlocks download access.
+
+8. Admin Panel
+
+* Admin can view datasets, users, and transactions.
+
+Tech Stack Requirements:
+
+Frontend
+
+* React (with Vite)
+* TailwindCSS
+* Leaflet or Mapbox for geospatial visualization
+
+Backend
+
+* Python with Django REST Framework
+* API endpoints for dataset upload, AI processing, and transactions
+
+AI Layer
+
+* Python
+* TensorFlow or PyTorch
+* OpenCV
+* Rasterio for satellite image processing
+
+Blockchain
+
+* Solidity smart contracts
+* Hardhat for development
+* Web3.js or ethers.js for frontend integration
+* Deploy on Polygon testnet
+
+Storage
+
+* IPFS via Pinata
+
+UI Pages Required:
+
+* Landing Page
+* Marketplace
+* Dataset Details Page
+* Upload Dataset Page
+* AI Analysis Page
+* Dashboard
+* Admin Panel
+
+The platform should be modular, scalable, and production-ready with a clean UI.
