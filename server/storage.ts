@@ -1,38 +1,60 @@
-import { type User, type InsertUser } from "@shared/schema";
-import { randomUUID } from "crypto";
-
-// modify the interface with any CRUD methods
-// you might need
+import { db } from "./db";
+import { eq, desc } from "drizzle-orm";
+import {
+  datasets,
+  purchases,
+  type Dataset,
+  type InsertDataset,
+  type Purchase,
+  type InsertPurchase
+} from "@shared/schema";
 
 export interface IStorage {
-  getUser(id: string): Promise<User | undefined>;
-  getUserByUsername(username: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
+  // Datasets
+  getDatasets(): Promise<Dataset[]>;
+  getDataset(id: number): Promise<Dataset | undefined>;
+  createDataset(dataset: InsertDataset): Promise<Dataset>;
+  updateDatasetAnalysis(id: number, analysis: any): Promise<Dataset>;
+  
+  // Purchases
+  getPurchases(userId: string): Promise<Purchase[]>;
+  createPurchase(purchase: InsertPurchase): Promise<Purchase>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<string, User>;
-
-  constructor() {
-    this.users = new Map();
+export class DatabaseStorage implements IStorage {
+  // --- Datasets ---
+  async getDatasets(): Promise<Dataset[]> {
+    return await db.select().from(datasets).orderBy(desc(datasets.createdAt));
   }
 
-  async getUser(id: string): Promise<User | undefined> {
-    return this.users.get(id);
+  async getDataset(id: number): Promise<Dataset | undefined> {
+    const [dataset] = await db.select().from(datasets).where(eq(datasets.id, id));
+    return dataset;
   }
 
-  async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+  async createDataset(dataset: InsertDataset): Promise<Dataset> {
+    const [newDataset] = await db.insert(datasets).values(dataset).returning();
+    return newDataset;
   }
 
-  async createUser(insertUser: InsertUser): Promise<User> {
-    const id = randomUUID();
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
-    return user;
+  async updateDatasetAnalysis(id: number, analysis: any): Promise<Dataset> {
+    const [updated] = await db
+      .update(datasets)
+      .set({ aiAnalysis: analysis })
+      .where(eq(datasets.id, id))
+      .returning();
+    return updated;
+  }
+
+  // --- Purchases ---
+  async getPurchases(userId: string): Promise<Purchase[]> {
+    return await db.select().from(purchases).where(eq(purchases.buyerId, userId)).orderBy(desc(purchases.createdAt));
+  }
+
+  async createPurchase(purchase: InsertPurchase): Promise<Purchase> {
+    const [newPurchase] = await db.insert(purchases).values(purchase).returning();
+    return newPurchase;
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();
