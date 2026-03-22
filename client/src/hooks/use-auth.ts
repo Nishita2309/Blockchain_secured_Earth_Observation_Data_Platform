@@ -17,6 +17,23 @@ async function fetchUser(): Promise<User | null> {
   return response.json();
 }
 
+async function loginWithWalletRequest(walletAddress: string): Promise<User> {
+  const response = await fetch("/api/auth/wallet", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify({ walletAddress }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`${response.status}: ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
 async function logout(): Promise<void> {
   window.location.href = "/api/logout";
 }
@@ -30,6 +47,13 @@ export function useAuth() {
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 
+  const loginMutation = useMutation({
+    mutationFn: loginWithWalletRequest,
+    onSuccess: (loggedInUser) => {
+      queryClient.setQueryData(["/api/auth/user"], loggedInUser);
+    },
+  });
+
   const logoutMutation = useMutation({
     mutationFn: logout,
     onSuccess: () => {
@@ -41,6 +65,8 @@ export function useAuth() {
     user,
     isLoading,
     isAuthenticated: !!user,
+    loginWithWallet: loginMutation.mutateAsync,
+    isLoggingIn: loginMutation.isPending,
     logout: logoutMutation.mutate,
     isLoggingOut: logoutMutation.isPending,
   };

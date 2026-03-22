@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, ArrowLeft, ShieldCheck, MapPin, Maximize, HardDrive, Cpu, ShoppingCart } from "lucide-react";
 import { motion } from "framer-motion";
+import { connectWalletAndLogin } from "@/lib/auth-utils";
 
 export default function DatasetDetails() {
   const { id } = useParams<{ id: string }>();
@@ -19,7 +20,7 @@ export default function DatasetDetails() {
 
   const handlePurchase = () => {
     if (!isAuthenticated) {
-      window.location.href = "/api/login";
+      void connectWalletAndLogin();
       return;
     }
     
@@ -49,7 +50,7 @@ export default function DatasetDetails() {
 
   const handleAnalyze = () => {
     if (!isAuthenticated) {
-      window.location.href = "/api/login";
+      void connectWalletAndLogin();
       return;
     }
     

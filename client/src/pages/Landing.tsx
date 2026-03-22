@@ -2,8 +2,12 @@ import { Link } from "wouter";
 import { Navbar } from "@/components/Navbar";
 import { motion } from "framer-motion";
 import { Globe2, ShieldCheck, Cpu, ArrowRight } from "lucide-react";
+import { connectWalletAndLogin } from "@/lib/auth-utils";
+import { useAuth } from "@/hooks/use-auth";
 
 export default function Landing() {
+  const { isAuthenticated, isLoading: isAuthLoading } = useAuth();
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
@@ -43,9 +47,22 @@ export default function Landing() {
                 <Link href="/marketplace" className="w-full sm:w-auto px-8 py-4 rounded-xl font-semibold text-primary-foreground bg-primary shadow-[0_0_20px_rgba(0,240,255,0.4)] hover:shadow-[0_0_30px_rgba(0,240,255,0.6)] hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2">
                   Explore Marketplace <ArrowRight className="w-4 h-4" />
                 </Link>
-                <a href="/api/login" className="w-full sm:w-auto px-8 py-4 rounded-xl font-semibold text-white glass-card hover:bg-white/5 transition-all duration-300 border-white/10 text-center">
-                  Connect Wallet
-                </a>
+                {!isAuthLoading && isAuthenticated ? (
+                  <Link
+                    href="/dashboard"
+                    className="w-full sm:w-auto px-8 py-4 rounded-xl font-semibold text-white glass-card hover:bg-white/5 transition-all duration-300 border-white/10 text-center"
+                  >
+                    Dashboard
+                  </Link>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => void connectWalletAndLogin()}
+                    className="w-full sm:w-auto px-8 py-4 rounded-xl font-semibold text-white glass-card hover:bg-white/5 transition-all duration-300 border-white/10 text-center"
+                  >
+                    Connect Wallet
+                  </button>
+                )}
               </div>
             </motion.div>
           </div>

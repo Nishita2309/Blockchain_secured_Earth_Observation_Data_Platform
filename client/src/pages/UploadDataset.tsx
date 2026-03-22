@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { UploadCloud, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
+import { connectWalletAndLogin } from "@/lib/auth-utils";
 
 export default function UploadDataset() {
   const [, setLocation] = useLocation();
@@ -25,7 +26,7 @@ export default function UploadDataset() {
 
   // Redirect if not auth
   if (!isAuthLoading && !isAuthenticated) {
-    window.location.href = "/api/login";
+    void connectWalletAndLogin();
     return null;
   }
 

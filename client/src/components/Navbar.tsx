@@ -5,8 +5,32 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export function Navbar() {
-  const { user, isAuthenticated, isLoading } = useAuth();
+  const { user, isAuthenticated, isLoading, loginWithWallet } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const handleConnectWallet = async () => {
+    try {
+      const { ethereum } = window as any;
+      if (!ethereum || !ethereum.request) {
+        alert("MetaMask (or a compatible Web3 wallet) was not detected in this browser.");
+        return;
+      }
+
+      const accounts: string[] = await ethereum.request({
+        method: "eth_requestAccounts",
+      });
+
+      const walletAddress = accounts[0];
+      if (!walletAddress) {
+        return;
+      }
+
+      await loginWithWallet(walletAddress);
+    } catch (error) {
+      console.error("Failed to connect wallet:", error);
+      alert("Failed to connect wallet. Please try again.");
+    }
+  };
 
   const navLinks = [
     { href: "/marketplace", label: "Marketplace" },
@@ -66,13 +90,14 @@ export function Navbar() {
                     </a>
                   </div>
                 ) : (
-                  <a
-                    href="/api/login"
+                  <button
+                    type="button"
+                    onClick={handleConnectWallet}
                     className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg font-medium text-sm bg-primary/10 text-primary border border-primary/30 hover:bg-primary hover:text-primary-foreground hover:shadow-[0_0_20px_rgba(0,240,255,0.4)] transition-all duration-300"
                   >
                     <Rocket className="w-4 h-4" />
-                    Connect Wallet / Login
-                  </a>
+                    Connect Wallet
+                  </button>
                 )
               )}
             </div>
@@ -120,12 +145,16 @@ export function Navbar() {
                       Logout
                     </a>
                   ) : (
-                    <a
-                      href="/api/login"
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        handleConnectWallet();
+                      }}
                       className="block w-full text-center px-4 py-3 rounded-lg font-medium text-primary bg-primary/10 border border-primary/30"
                     >
-                      Connect Wallet / Login
-                    </a>
+                      Connect Wallet
+                    </button>
                   )
                 )}
               </div>

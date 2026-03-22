@@ -50,7 +50,10 @@ export async function registerRoutes(
   // Create dataset (Protected)
   app.post(api.datasets.create.path, isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
       const input = api.datasets.create.input.parse(req.body);
       
       const dataset = await storage.createDataset({
@@ -126,7 +129,10 @@ export async function registerRoutes(
   // List user's purchases (Protected)
   app.get(api.purchases.list.path, isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
       const purchases = await storage.getPurchases(userId);
       res.status(200).json(purchases);
     } catch (err) {
@@ -138,7 +144,10 @@ export async function registerRoutes(
   // Create purchase (Protected)
   app.post(api.purchases.create.path, isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
       const input = api.purchases.create.input.parse(req.body);
       
       // Verify dataset exists

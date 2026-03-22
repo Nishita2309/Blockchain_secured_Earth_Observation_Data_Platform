@@ -7,6 +7,7 @@ import { usePurchases } from "@/hooks/use-purchases";
 import { LayoutDashboard, ShoppingBag, HardDrive, Loader2, Key } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from "wouter";
+import { connectWalletAndLogin } from "@/lib/auth-utils";
 
 export default function Dashboard() {
   const { user, isAuthenticated, isLoading: isAuthLoading } = useAuth();
@@ -17,7 +18,7 @@ export default function Dashboard() {
 
   // Redirect if not auth
   if (!isAuthLoading && !isAuthenticated) {
-    window.location.href = "/api/login";
+    void connectWalletAndLogin();
     return null;
   }
 
